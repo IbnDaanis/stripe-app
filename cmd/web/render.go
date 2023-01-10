@@ -9,17 +9,17 @@ import (
 )
 
 type templateData struct {
-	StringMap      map[string]string
-	IntMap         map[string]int
-	FloatMap       map[string]float32
-	Data           map[string]interface{}
-	CSRFToken      string
-	Flash          string
-	Warning        string
-	Error          string
-	IsAuthenicated int
-	API            string
-	CSSVersion     string
+	StringMap       map[string]string
+	IntMap          map[string]int
+	FloatMap        map[string]float32
+	Data            map[string]interface{}
+	CSRFToken       string
+	Flash           string
+	Warning         string
+	Error           string
+	IsAuthenticated int
+	API             string
+	CSSVersion      string
 }
 
 var functions = template.FuncMap{}
@@ -40,8 +40,7 @@ func (app *application) renderTemplate(
 ) error {
 	var t *template.Template
 	var err error
-
-	templateToRender := fmt.Sprintf("templates/%s/page.tmpl", page)
+	templateToRender := fmt.Sprintf("templates/%s.page.tmpl", page)
 
 	_, templateInMap := app.templateCache[templateToRender]
 
@@ -62,7 +61,6 @@ func (app *application) renderTemplate(
 	td = app.addDefaultData(td, r)
 
 	err = t.Execute(w, td)
-
 	if err != nil {
 		app.errorLog.Println(err)
 		return err
@@ -90,19 +88,13 @@ func (app *application) parseTemplate(
 			Funcs(functions).
 			ParseFS(templateFS, "templates/base.layout.tmpl", strings.Join(partials, ","), templateToRender)
 	} else {
-
-		t, err = template.New(fmt.Sprintf("%s.page.tmpl", page)).
-			Funcs(functions).
-			ParseFS(templateFS, "templates/base.layout.tmpl", templateToRender)
-
+		t, err = template.New(fmt.Sprintf("%s.page.tmpl", page)).Funcs(functions).ParseFS(templateFS, "templates/base.layout.tmpl", templateToRender)
 	}
-
 	if err != nil {
 		app.errorLog.Println(err)
 		return nil, err
 	}
 
 	app.templateCache[templateToRender] = t
-
 	return t, nil
 }
