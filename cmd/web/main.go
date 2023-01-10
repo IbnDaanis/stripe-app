@@ -30,7 +30,7 @@ type application struct {
 	config        config
 	infoLog       *log.Logger
 	errorLog      *log.Logger
-	templaceCache map[string]*template.Template
+	templateCache map[string]*template.Template
 	version       string
 }
 
@@ -44,7 +44,11 @@ func (app *application) serve() error {
 		WriteTimeout:      5 * time.Second,
 	}
 
-	app.infoLog.Printf("Starting HTTP server in %s on port %d", app.config.env, app.config.port)
+	app.infoLog.Printf(
+		"Starting HTTP server in %s mode on port %d",
+		app.config.env,
+		app.config.port,
+	)
 
 	return srv.ListenAndServe()
 }
@@ -75,7 +79,7 @@ func main() {
 		config:        cfg,
 		infoLog:       infoLog,
 		errorLog:      errorLog,
-		templaceCache: tc,
+		templateCache: tc,
 		version:       version,
 	}
 
