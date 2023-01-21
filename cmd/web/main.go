@@ -63,7 +63,7 @@ func main() {
 		"development",
 		"Application environment {development|production}",
 	)
-	flag.StringVar(&cfg.api, "api", "http://localhost:4001", "URL to api")
+	flag.StringVar(&cfg.api, "api", "http://localhost:4002", "URL to api")
 
 	flag.Parse()
 
