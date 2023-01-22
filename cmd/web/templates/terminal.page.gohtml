@@ -67,6 +67,11 @@ Virtual Terminal
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
+
+  <input type="hidden" name="payment_intent" id="payment_intent" />
+  <input type="hidden" name="payment_method" id="payment_method" />
+  <input type="hidden" name="payment_amount" id="payment_amount" />
+  <input type="hidden" name="payment_currency" id="payment_curreny" />
 </form>
 
 {{ end }}
@@ -81,7 +86,9 @@ Virtual Terminal
   const payButton = document.getElementById('pay-button')
   const processing = document.getElementById('processing-payment')
 
-  stripe = Stripe('pk_test_lOwqX0SiQCGm7wSkqNoBgMLc')
+  stripe = Stripe(
+    'pk_test_51MQ7bzJoDDwM4xKfpL0dQMRrdGDgMuRlv3HeN4rAO9ztHUhlY6ozMNwt11EqFu7DOvrZBok12KUWSa5Ib3xuc8nZ00fFD7Q5IA'
+  )
 
   function hidePayButton() {
     payButton.classList.add('d-none')
@@ -98,6 +105,34 @@ Virtual Terminal
     }
     form.classList.add('was-validated')
     hidePayButton()
+
+    let amountToCharge = String(parseFloat(document.getElementById('amount').value) * 100)
+
+    let payload = {
+      amount: amountToCharge,
+      currency: 'gbp'
+    }
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    }
+
+    fetch('http://localhost:4002/api/payment-intent', requestOptions)
+      .then(response => response.text())
+      .then(response => {
+        let data
+        try {
+          data = JSON.parse(response)
+          console.log(data)
+        } catch (err) {
+          console.log(err)
+        }
+      })
   }
 
   ;(function () {
